@@ -1,7 +1,9 @@
-import { Page, PDFViewer, View, Document, Text, StyleSheet, Image, Font } from "@react-pdf/renderer";
+import { useState } from "react";
+import { Page, PDFViewer, View, Document, Text, StyleSheet, Image, Font, pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
 import logo from '../../assets/logoblood-removebg-preview.png';
 
-// Register the Bengali font manually
+// Register the Bengali font
 import NotoSerifBengali from "../../../public/fonts/NotoSerifBengali-VariableFont_wdth,wght.ttf";
 
 Font.register({
@@ -11,16 +13,16 @@ Font.register({
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: '#fff',
-    color: '#262626',
-    fontFamily: 'NotoSerifBengali', // Use the registered font
+    backgroundColor: "#fff",
+    color: "#262626",
+    fontFamily: "NotoSerifBengali",
     fontSize: 12,
     padding: 30,
   },
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   logo: {
     width: 60,
@@ -28,42 +30,40 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   subtitle: {
     fontSize: 12,
   },
   subtitle2: {
     fontSize: 16,
-    color: 'red', // Add quotes around 'red'
+    color: "red",
   },
-  
   table: {
-    width: '100%',
+    width: "100%",
     marginTop: 10,
   },
   tableRow: {
-    flexDirection: 'row',
-    borderBottom: '1px solid #ddd',
+    flexDirection: "row",
+    borderBottom: "1px solid #ddd",
     padding: 5,
   },
   tableHeader: {
-    fontWeight: 'bold',
-    backgroundColor: '#f2f2f2',
+    fontWeight: "bold",
+    backgroundColor: "#f2f2f2",
   },
   tableCell: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   footer: {
-    backgroundColor: '#3533CA',
-    color: 'white',
-    textAlign: 'center',
+    backgroundColor: "#3533CA",
+    color: "white",
+    textAlign: "center",
     padding: 5,
     marginTop: 10,
   },
 });
-
 const ramadanScheduleBangla = [
   { "day": "১", "date": "০২ মার্চ ", "sehri": "০৫:০৪ AM", "iftar": "৬:০২ PM" },
   { "day": "২", "date": "০৩ মার্চ ", "sehri": "০৫:০৩ AM", "iftar": "৬:০৩ PM" },
@@ -96,24 +96,20 @@ const ramadanScheduleBangla = [
   { "day": "২৯", "date": "৩০ মার্চ ", "sehri": "০৪:৩৫ AM", "iftar": "৬:১৪ PM" },
   { "day": "৩০", "date": "৩১ মার্চ ", "sehri": "০৪:৩৪ AM", "iftar": "৬:১৫ PM" }
 ];
-
 const RamadanPDF = () => (
   <Document>
     <Page size="A4" style={styles.page}>
-      {/* Header */}
       <View style={styles.headerContainer}>
         <Image style={styles.logo} src={logo} />
         <View>
           <Text style={styles.title}>Blood Bank Bangladesh</Text>
-          <Text style={styles.subtitle}>( জীবনের প্রয়োজনে রক্ত) </Text>
-          <Text style={styles.subtitle2}>সেহেরি ও ইফতারের সময়সূচি </Text>
-          <Text style={styles.subtitle}>( শুধু ঢাকা জেলার জন্য ) </Text>
+          <Text style={styles.subtitle}>( জীবনের প্রয়োজনে রক্ত )</Text>
+          <Text style={styles.subtitle2}>সেহেরি ও ইফতারের সময়সূচি</Text>
+          <Text style={styles.subtitle}>( শুধু ঢাকা জেলার জন্য )</Text>
         </View>
       </View>
 
-      {/* Table */}
       <View style={styles.table}>
-        {/* Table Header */}
         <View style={[styles.tableRow, styles.tableHeader]}>
           <Text style={styles.tableCell}>রমজান</Text>
           <Text style={styles.tableCell}>তারিখ</Text>
@@ -121,8 +117,8 @@ const RamadanPDF = () => (
           <Text style={styles.tableCell}>ইফতার</Text>
         </View>
 
-        {/* Table Body */}
-        {ramadanScheduleBangla.map((item, index) => (
+           {/* Table Body */}
+           {ramadanScheduleBangla.map((item, index) => (
           <View key={index} style={styles.tableRow}>
             <Text style={styles.tableCell}>{item.day}</Text>
             <Text style={styles.tableCell}>{item.date}</Text>
@@ -132,7 +128,6 @@ const RamadanPDF = () => (
         ))}
       </View>
 
-      {/* Footer */}
       <View style={styles.footer}>
         <Text>Donate Blood, Save Life</Text>
         <Text>ESTD-2020</Text>
@@ -144,11 +139,27 @@ const RamadanPDF = () => (
 );
 
 const Home2 = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleDownload = async () => {
+    setLoading(true);
+    const blob = await pdf(<RamadanPDF />).toBlob();
+    saveAs(blob, "Ramadan_Schedule.pdf");
+    setLoading(false);
+  };
+
   return (
-    <div className="w-full h-[1280px]">
+    <div className="w-full h-[1280px] flex flex-col items-center">
       <PDFViewer width="100%" height="100%">
         <RamadanPDF />
       </PDFViewer>
+      <button
+        onClick={handleDownload}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        disabled={loading}
+      >
+        {loading ? "Downloading..." : "Download PDF"}
+      </button>
     </div>
   );
 };
