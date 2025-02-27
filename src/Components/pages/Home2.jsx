@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     color: "#262626",
     fontFamily: "NotoSerifBengali",
     fontSize: 12,
-    padding: 30,
+    padding: 20,
   },
   headerContainer: {
     flexDirection: "row",
@@ -25,28 +25,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
   },
   title: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "bold",
   },
   subtitle: {
     fontSize: 12,
   },
   subtitle2: {
-    fontSize: 16,
+    fontSize: 12,
     color: "red",
   },
   table: {
     width: "100%",
-    marginTop: 10,
+    marginTop: 0,
   },
   tableRow: {
     flexDirection: "row",
     borderBottom: "1px solid #ddd",
-    padding: 5,
+    padding: 1,
   },
   tableHeader: {
     fontWeight: "bold",
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#3533CA",
     color: "white",
     textAlign: "center",
-    padding: 5,
-    marginTop: 10,
+    padding: 0,
+    marginTop: 0,
   },
 });
 const ramadanScheduleBangla = [
@@ -103,7 +103,6 @@ const RamadanPDF = () => (
         <Image style={styles.logo} src={logo} />
         <View>
           <Text style={styles.title}>Blood Bank Bangladesh</Text>
-          <Text style={styles.subtitle}>( জীবনের প্রয়োজনে রক্ত )</Text>
           <Text style={styles.subtitle2}>সেহেরি ও ইফতারের সময়সূচি</Text>
           <Text style={styles.subtitle}>( শুধু ঢাকা জেলার জন্য )</Text>
         </View>
@@ -130,7 +129,6 @@ const RamadanPDF = () => (
 
       <View style={styles.footer}>
         <Text>Donate Blood, Save Life</Text>
-        <Text>ESTD-2020</Text>
         <Text>বি.দ্রঃ ১ম রমজান চাঁদ দেখার উপর নির্ভরশীল।</Text>
         <Text>Design by Amir Hossain | 01904722779</Text>
       </View>
@@ -149,19 +147,25 @@ const Home2 = () => {
   };
 
   return (
-    <div className="w-full h-[1280px] flex flex-col items-center">
+    <div className="w-full h-[1280px] flex flex-col items-center relative">
+      {/* Sticky Download Button */}
+      <div className="w-full bg-white p-4 flex justify-center sticky top-0 z-50 shadow-md">
+        <button
+          onClick={handleDownload}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          disabled={loading}
+        >
+          {loading ? "Downloading..." : "Download PDF"}
+        </button>
+      </div>
+
+      {/* PDF Viewer */}
       <PDFViewer width="100%" height="100%">
         <RamadanPDF />
       </PDFViewer>
-      <button
-        onClick={handleDownload}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        disabled={loading}
-      >
-        {loading ? "Downloading..." : "Download PDF"}
-      </button>
     </div>
   );
 };
 
 export default Home2;
+
